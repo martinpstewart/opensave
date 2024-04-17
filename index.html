@@ -1,28 +1,49 @@
-import tkinter as tk
-from tkinter import filedialog
-from reportlab.pdfgen import canvas
-import shutil
+<!DOCTYPE html>
+<html lang="en">
 
-def generate_pdf():
-    # Create a PDF document
-    c = canvas.Canvas("example.pdf")
-    c.drawString(100, 750, "Hello, World!")
-    c.save()
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML to PDF</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
 
-def select_download_folder():
-    root = tk.Tk()
-    root.withdraw()  # Hide the main window
+    function generatePdf() {
+      const pdfContent = getUrlParameter('PDF');
+      if (pdfContent) {
+        const blob = new Blob([pdfContent], { type: 'application/pdf' });
+        return blob;
+      }
+      return null;
+    }
 
-    # Ask the user to select a download folder
-    download_folder = filedialog.askdirectory(title="Select Download Folder")
-    if download_folder:
-        # If the user selected a folder, generate the PDF and save it there
-        generate_pdf()
-        pdf_path = "example.pdf"
-        shutil.move(pdf_path, download_folder)
-        print(f"PDF saved to {download_folder}")
-    else:
-        print("No folder selected.")
+    function openDownloadWindow() {
+      const pdfBlob = generatePdf();
+      if (pdfBlob) {
+        const url = URL.createObjectURL(pdfBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'file.pdf'; // Set the filename here
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        alert('PDF content not found.');
+      }
+    }
+  </script>
+</head>
 
-if __name__ == "__main__":
-    select_download_folder()
+<body>
+  <div id="content"></div>
+  <button onclick="openDownloadWindow()">Download PDF</button>
+</body>
+
+</html>
