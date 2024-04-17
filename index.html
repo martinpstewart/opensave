@@ -4,23 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HTML to PDF</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Download PDF</title>
   <script>
-    function getUrlParameter(name) {
-      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-      var results = regex.exec(location.search);
-      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    }
-
     function generatePdf() {
-      const pdfContent = getUrlParameter('PDF');
-      if (pdfContent) {
-        const blob = new Blob([pdfContent], { type: 'application/pdf' });
-        return blob;
-      }
-      return null;
+      // Simulating PDF content here for demonstration purposes
+      const pdfContent = 'Sample PDF content';
+      const blob = new Blob([pdfContent], { type: 'application/pdf' });
+      return blob;
     }
 
     function downloadPdf() {
@@ -28,29 +18,15 @@
       if (pdfBlob) {
         const url = URL.createObjectURL(pdfBlob);
 
-        // Create an input element with the webkitdirectory attribute
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.setAttribute('webkitdirectory', '');
-
-        input.onchange = function(event) {
-          const selectedFolder = event.target.files[0]?.path;
-          if (selectedFolder) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'file.pdf'; // Set the filename here
-            a.setAttribute('download', '');
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          } else {
-            alert('No folder selected.');
-          }
-        };
-
-        // Click the input element to trigger the folder selection window
-        input.click();
+        // Create a download link
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'file.pdf'; // Set the filename here
+        a.setAttribute('download', '');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       } else {
         alert('PDF content not found.');
       }
@@ -59,7 +35,6 @@
 </head>
 
 <body>
-  <div id="content"></div>
   <button onclick="downloadPdf()">Download PDF</button>
 </body>
 
