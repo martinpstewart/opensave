@@ -27,24 +27,15 @@
       const pdfBlob = generatePdf();
       if (pdfBlob) {
         const url = URL.createObjectURL(pdfBlob);
-
-        // Use the HTML5 FileSystem API to prompt the user to select a directory
-        window.webkitRequestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-          fs.root.getDirectory('', { create: true, exclusive: false }, function(dirEntry) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'file.pdf'; // Set the filename here
-            a.setAttribute('download', '');
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          }, errorHandler);
-        }, errorHandler);
-
-        function errorHandler(error) {
-          console.error('File system error:', error);
-        }
+        alert('Please manually select the destination folder for download in your browser.');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'file.pdf'; // Set the filename here
+        a.setAttribute('download', '');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       } else {
         alert('PDF content not found.');
       }
