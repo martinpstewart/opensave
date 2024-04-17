@@ -1,66 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+import tkinter as tk
+from tkinter import filedialog
+from reportlab.pdfgen import canvas
+import shutil
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HTML to PDF</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    function getUrlParameter(name) {
-      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-      var results = regex.exec(location.search);
-      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    }
+def generate_pdf():
+    # Create a PDF document
+    c = canvas.Canvas("example.pdf")
+    c.drawString(100, 750, "Hello, World!")
+    c.save()
 
-    function generatePdf() {
-      const pdfContent = getUrlParameter('PDF');
-      if (pdfContent) {
-        const blob = new Blob([pdfContent], { type: 'application/pdf' });
-        return blob;
-      }
-      return null;
-    }
+def select_download_folder():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
 
-    function downloadPdf() {
-      const pdfBlob = generatePdf();
-      if (pdfBlob) {
-        const url = URL.createObjectURL(pdfBlob);
+    # Ask the user to select a download folder
+    download_folder = filedialog.askdirectory(title="Select Download Folder")
+    if download_folder:
+        # If the user selected a folder, generate the PDF and save it there
+        generate_pdf()
+        pdf_path = "example.pdf"
+        shutil.move(pdf_path, download_folder)
+        print(f"PDF saved to {download_folder}")
+    else:
+        print("No folder selected.")
 
-        // Create an input element with the webkitdirectory attribute
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.setAttribute('webkitdirectory', '');
-
-        input.onchange = function(event) {
-          const selectedFolder = event.target.files[0]?.path;
-          if (selectedFolder) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'file.pdf'; // Set the filename here
-            a.setAttribute('download', '');
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          } else {
-            alert('No folder selected.');
-          }
-        };
-
-        // Click the input element to trigger the folder selection window
-        input.click();
-      } else {
-        alert('PDF content not found.');
-      }
-    }
-  </script>
-</head>
-
-<body>
-  <div id="content"></div>
-  <button onclick="downloadPdf()">Download PDF</button>
-</body>
-
-</html>
+if __name__ == "__main__":
+    select_download_folder()
