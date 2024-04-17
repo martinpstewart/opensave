@@ -28,14 +28,9 @@
       if (pdfBlob) {
         const url = URL.createObjectURL(pdfBlob);
 
-        // Create an input element with the webkitdirectory attribute
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.setAttribute('webkitdirectory', '');
-
-        input.onchange = function(event) {
-          const selectedFolder = event.target.files[0]?.path;
-          if (selectedFolder) {
+        // Use the HTML5 FileSystem API to prompt the user to select a directory
+        window.webkitRequestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+          fs.root.getDirectory('', { create: true, exclusive: false }, function(dirEntry) {
             const a = document.createElement('a');
             a.href = url;
             a.download = 'file.pdf'; // Set the filename here
@@ -44,13 +39,12 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-          } else {
-            alert('No folder selected.');
-          }
-        };
+          }, errorHandler);
+        }, errorHandler);
 
-        // Click the input element to trigger the folder selection window
-        input.click();
+        function errorHandler(error) {
+          console.error('File system error:', error);
+        }
       } else {
         alert('PDF content not found.');
       }
