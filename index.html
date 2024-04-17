@@ -27,15 +27,30 @@
       const pdfBlob = generatePdf();
       if (pdfBlob) {
         const url = URL.createObjectURL(pdfBlob);
-        alert('Please manually select the destination folder for download in your browser.');
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'file.pdf'; // Set the filename here
-        a.setAttribute('download', '');
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+
+        // Create an input element with the webkitdirectory attribute
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.setAttribute('webkitdirectory', '');
+
+        input.onchange = function(event) {
+          const selectedFolder = event.target.files[0]?.path;
+          if (selectedFolder) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'file.pdf'; // Set the filename here
+            a.setAttribute('download', '');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          } else {
+            alert('No folder selected.');
+          }
+        };
+
+        // Click the input element to trigger the folder selection window
+        input.click();
       } else {
         alert('PDF content not found.');
       }
