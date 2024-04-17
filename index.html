@@ -14,11 +14,19 @@
       return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
-    function saveAsPdf() {
+    function generatePdf() {
       const pdfContent = getUrlParameter('PDF');
       if (pdfContent) {
         const blob = new Blob([pdfContent], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
+        return blob;
+      }
+      return null;
+    }
+
+    function openDownloadWindow() {
+      const pdfBlob = generatePdf();
+      if (pdfBlob) {
+        const url = URL.createObjectURL(pdfBlob);
         const a = document.createElement('a');
         a.href = url;
         a.download = 'file.pdf'; // Set the filename here
@@ -26,13 +34,16 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+      } else {
+        alert('PDF content not found.');
       }
     }
   </script>
 </head>
 
-<body onload="saveAsPdf()">
+<body>
   <div id="content"></div>
+  <button onclick="openDownloadWindow()">Download PDF</button>
 </body>
 
 </html>
